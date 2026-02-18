@@ -292,5 +292,7 @@ def snap_phy_subhalo(base, snap, subhalo_id, ptype, aexp, adot, hh, extra_fields
         data['ElectronAbundance'] = part['ElectronAbundance']
     if 'Density' in part:
         data['Density'] = part['Density'] * ((hh**2) *1e10) / (aexp**3.0)
+    if 'StarFormationRate' in part:
+        data['StarFormationRate'] = part['StarFormationRate']
     return data
     
