@@ -1,0 +1,595 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- A SKIRT parameter file © Astronomical Observatory, Ghent University -->
+<skirt-simulation-hierarchy type="MonteCarloSimulation" format="9" producer="Python toolkit for SKIRT (SkiFile class)" time="2022-08-08T10:38:22">
+  <MonteCarloSimulation userLevel="Expert" simulationMode="DustEmission" numPackets="numP">
+    <random type="Random">
+      <Random seed="0"/>
+    </random>
+    <units type="Units">
+      <ExtragalacticUnits fluxOutputStyle="Frequency"/>
+    </units>
+    <cosmology type="Cosmology">
+      <FlatUniverseCosmology redshift="Xredshift" reducedHubbleConstant="0.6774" matterDensityFraction="0.3089"/>
+    </cosmology>
+    <sourceSystem type="SourceSystem">
+      <SourceSystem minWavelength="0.0091 micron" maxWavelength="2000 micron" wavelengths="0.55 micron" sourceBias="0.5">
+        <sources type="Source">
+          <ParticleSource filename="stars.txt" importVelocity="false" importVelocityDispersion="false" importCurrentMass="false" useColumns="" sourceWeight="1" wavelengthBias="0.5">
+            <smoothingKernel type="SmoothingKernel">
+              <CubicSplineSmoothingKernel/>
+            </smoothingKernel>
+            <sedFamily type="SEDFamily">
+              <BruzualCharlotSEDFamily imf="Chabrier" resolution="Low"/>
+            </sedFamily>
+            <wavelengthBiasDistribution type="WavelengthDistribution">
+              <LogWavelengthDistribution minWavelength="0.0001 micron" maxWavelength="1e6 micron"/>
+            </wavelengthBiasDistribution>
+          </ParticleSource>
+          <ParticleSource filename="sfr.txt" importVelocity="false" importVelocityDispersion="false" importCurrentMass="false" useColumns="" sourceWeight="1" wavelengthBias="0.5">
+            <smoothingKernel type="SmoothingKernel">
+              <CubicSplineSmoothingKernel/>
+            </smoothingKernel>
+            <sedFamily type="SEDFamily">
+              <MappingsSEDFamily/>
+            </sedFamily>
+            <wavelengthBiasDistribution type="WavelengthDistribution">
+              <LogWavelengthDistribution minWavelength="0.0001 micron" maxWavelength="1e6 micron"/>
+            </wavelengthBiasDistribution>
+          </ParticleSource>
+        </sources>
+      </SourceSystem>
+    </sourceSystem>
+    <mediumSystem type="MediumSystem">
+      <MediumSystem>
+        <secondaryEmissionOptions type="SecondaryEmissionOptions">
+          <SecondaryEmissionOptions storeEmissionRadiationField="true" secondaryPacketsMultiplier="1" spatialBias="0.5"/>
+        </secondaryEmissionOptions>
+        <samplingOptions type="SamplingOptions">
+          <SamplingOptions numDensitySamples="500"/>
+        </samplingOptions>
+        <radiationFieldOptions type="RadiationFieldOptions">
+          <RadiationFieldOptions>
+            <radiationFieldWLG type="DisjointWavelengthGrid">
+              <LogWavelengthGrid minWavelength="0.02 micron" maxWavelength="10 micron" numWavelengths="25"/>
+            </radiationFieldWLG>
+          </RadiationFieldOptions>
+        </radiationFieldOptions>
+        <photonPacketOptions type="PhotonPacketOptions">
+          <PhotonPacketOptions minWeightReduction="1e4" minScattEvents="0" pathLengthBias="0.5"/>
+        </photonPacketOptions>
+        <dustEmissionOptions type="DustEmissionOptions">
+          <DustEmissionOptions dustEmissionType="Stochastic" includeHeatingByCMB="false" wavelengthBias="0.5">
+            <cellLibrary type="SpatialCellLibrary">
+              <AllCellsLibrary/>
+            </cellLibrary>
+            <dustEmissionWLG type="DisjointWavelengthGrid">
+              <NestedLogWavelengthGrid minWavelengthBaseGrid="0.2 micron" maxWavelengthBaseGrid="2000 micron" numWavelengthsBaseGrid="100" minWavelengthSubGrid="3 micron" maxWavelengthSubGrid="25 micron" numWavelengthsSubGrid="200"/>
+            </dustEmissionWLG>
+            <wavelengthBiasDistribution type="WavelengthDistribution">
+              <LogWavelengthDistribution minWavelength="0.04 micron" maxWavelength="1e6 micron"/>
+            </wavelengthBiasDistribution>
+          </DustEmissionOptions>
+        </dustEmissionOptions>
+        <media type="Medium">
+          <VoronoiMeshMedium filename="dust.txt" minX="-X pc" maxX="X pc" minY="-Y pc" maxY="Y pc" minZ="-Z pc" maxZ="Z pc" massType="MassDensity" massFraction="fdust" importMetallicity="true" importTemperature="false" maxTemperature="0 K" importVelocity="false" importMagneticField="false" importVariableMixParams="false" useColumns="">
+            <materialMix type="MaterialMix">
+              <ThemisDustMix numSilicateSizes="15" numHydrocarbonSizes="15"/>
+            </materialMix>
+          </VoronoiMeshMedium>
+        </media>
+        <grid type="SpatialGrid">
+          <PolicyTreeSpatialGrid minX="-X pc" maxX="X pc" minY="-Y pc" maxY="Y pc" minZ="-Z pc" maxZ="Z pc" treeType="OctTree">
+            <policy type="TreePolicy">
+              <DensityTreePolicy minLevel="6" maxLevel="12" maxDustFraction="2e-6" maxDustOpticalDepth="0" wavelength="0.55 micron" maxDustDensityDispersion="0" maxElectronFraction="1e-6" maxGasFraction="1e-6"/>
+            </policy>
+          </PolicyTreeSpatialGrid>
+        </grid>
+      </MediumSystem>
+    </mediumSystem>
+    <instrumentSystem type="InstrumentSystem">
+      <InstrumentSystem>
+        <defaultWavelengthGrid type="WavelengthGrid">
+          <LogWavelengthGrid minWavelength="0.02 micron" maxWavelength="2000 micron" numWavelengths="450"/>
+        </defaultWavelengthGrid>
+        <instruments type="Instrument">
+          <SEDInstrument instrumentName="or_z0_band" distance="dist_z0_Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="0 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat">
+            <wavelengthGrid type="WavelengthGrid">
+              <ConfigurableBandWavelengthGrid>
+                <bands type="Band">
+                  <BroadBand bandName="2MASS_2MASS_J"/>
+                  <BroadBand bandName="2MASS_2MASS_H"/>
+                  <BroadBand bandName="2MASS_2MASS_Ks"/>
+                  <BroadBand bandName="ALMA_ALMA_10"/>
+                  <BroadBand bandName="ALMA_ALMA_9"/>
+                  <BroadBand bandName="ALMA_ALMA_8"/>
+                  <BroadBand bandName="ALMA_ALMA_7"/>
+                  <BroadBand bandName="ALMA_ALMA_6"/>
+                  <BroadBand bandName="GALEX_GALEX_FUV"/>
+                  <BroadBand bandName="GALEX_GALEX_NUV"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_U"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_B"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_V"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_R"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_I"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_J"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_M"/>
+                  <BroadBand bandName="HERSCHEL_PACS_70"/>
+                  <BroadBand bandName="HERSCHEL_PACS_100"/>
+                  <BroadBand bandName="HERSCHEL_PACS_160"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_250"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_350"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_500"/>
+                  <BroadBand bandName="IRAS_IRAS_12"/>
+                  <BroadBand bandName="IRAS_IRAS_25"/>
+                  <BroadBand bandName="IRAS_IRAS_60"/>
+                  <BroadBand bandName="IRAS_IRAS_100"/>
+                  <BroadBand bandName="JCMT_SCUBA2_450"/>
+                  <BroadBand bandName="JCMT_SCUBA2_850"/>
+                  <BroadBand bandName="PLANCK_HFI_857"/>
+                  <BroadBand bandName="PLANCK_HFI_545"/>
+                  <BroadBand bandName="PLANCK_HFI_353"/>
+                  <BroadBand bandName="SLOAN_SDSS_U"/>
+                  <BroadBand bandName="SLOAN_SDSS_G"/>
+                  <BroadBand bandName="SLOAN_SDSS_R"/>
+                  <BroadBand bandName="SLOAN_SDSS_I"/>
+                  <BroadBand bandName="SLOAN_SDSS_Z"/>
+                  <BroadBand bandName="SPITZER_IRAC_I1"/>
+                  <BroadBand bandName="SPITZER_IRAC_I2"/>
+                  <BroadBand bandName="SPITZER_IRAC_I3"/>
+                  <BroadBand bandName="SPITZER_IRAC_I4"/>
+                  <BroadBand bandName="SPITZER_MIPS_24"/>
+                  <BroadBand bandName="SPITZER_MIPS_70"/>
+                  <BroadBand bandName="SPITZER_MIPS_160"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Z"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Y"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_J"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_H"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_K"/>
+                  <BroadBand bandName="WISE_WISE_W1"/>
+                  <BroadBand bandName="WISE_WISE_W2"/>
+                  <BroadBand bandName="WISE_WISE_W3"/>
+                  <BroadBand bandName="WISE_WISE_W4"/>
+                </bands>
+              </ConfigurableBandWavelengthGrid>
+            </wavelengthGrid>
+          </SEDInstrument>
+          <SEDInstrument instrumentName="or_z0_band_10" distance="dist_z0_Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="10000 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat">
+            <wavelengthGrid type="WavelengthGrid">
+              <ConfigurableBandWavelengthGrid>
+                <bands type="Band">
+                  <BroadBand bandName="2MASS_2MASS_J"/>
+                  <BroadBand bandName="2MASS_2MASS_H"/>
+                  <BroadBand bandName="2MASS_2MASS_Ks"/>
+                  <BroadBand bandName="ALMA_ALMA_10"/>
+                  <BroadBand bandName="ALMA_ALMA_9"/>
+                  <BroadBand bandName="ALMA_ALMA_8"/>
+                  <BroadBand bandName="ALMA_ALMA_7"/>
+                  <BroadBand bandName="ALMA_ALMA_6"/>
+                  <BroadBand bandName="GALEX_GALEX_FUV"/>
+                  <BroadBand bandName="GALEX_GALEX_NUV"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_U"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_B"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_V"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_R"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_I"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_J"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_M"/>
+                  <BroadBand bandName="HERSCHEL_PACS_70"/>
+                  <BroadBand bandName="HERSCHEL_PACS_100"/>
+                  <BroadBand bandName="HERSCHEL_PACS_160"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_250"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_350"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_500"/>
+                  <BroadBand bandName="IRAS_IRAS_12"/>
+                  <BroadBand bandName="IRAS_IRAS_25"/>
+                  <BroadBand bandName="IRAS_IRAS_60"/>
+                  <BroadBand bandName="IRAS_IRAS_100"/>
+                  <BroadBand bandName="JCMT_SCUBA2_450"/>
+                  <BroadBand bandName="JCMT_SCUBA2_850"/>
+                  <BroadBand bandName="PLANCK_HFI_857"/>
+                  <BroadBand bandName="PLANCK_HFI_545"/>
+                  <BroadBand bandName="PLANCK_HFI_353"/>
+                  <BroadBand bandName="SLOAN_SDSS_U"/>
+                  <BroadBand bandName="SLOAN_SDSS_G"/>
+                  <BroadBand bandName="SLOAN_SDSS_R"/>
+                  <BroadBand bandName="SLOAN_SDSS_I"/>
+                  <BroadBand bandName="SLOAN_SDSS_Z"/>
+                  <BroadBand bandName="SPITZER_IRAC_I1"/>
+                  <BroadBand bandName="SPITZER_IRAC_I2"/>
+                  <BroadBand bandName="SPITZER_IRAC_I3"/>
+                  <BroadBand bandName="SPITZER_IRAC_I4"/>
+                  <BroadBand bandName="SPITZER_MIPS_24"/>
+                  <BroadBand bandName="SPITZER_MIPS_70"/>
+                  <BroadBand bandName="SPITZER_MIPS_160"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Z"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Y"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_J"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_H"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_K"/>
+                  <BroadBand bandName="WISE_WISE_W1"/>
+                  <BroadBand bandName="WISE_WISE_W2"/>
+                  <BroadBand bandName="WISE_WISE_W3"/>
+                  <BroadBand bandName="WISE_WISE_W4"/>
+                </bands>
+              </ConfigurableBandWavelengthGrid>
+            </wavelengthGrid>
+          </SEDInstrument>
+          <SEDInstrument instrumentName="or_z0_band_2R" distance="dist_z0_Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="2R12 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat">
+            <wavelengthGrid type="WavelengthGrid">
+              <ConfigurableBandWavelengthGrid>
+                <bands type="Band">
+                  <BroadBand bandName="2MASS_2MASS_J"/>
+                  <BroadBand bandName="2MASS_2MASS_H"/>
+                  <BroadBand bandName="2MASS_2MASS_Ks"/>
+                  <BroadBand bandName="ALMA_ALMA_10"/>
+                  <BroadBand bandName="ALMA_ALMA_9"/>
+                  <BroadBand bandName="ALMA_ALMA_8"/>
+                  <BroadBand bandName="ALMA_ALMA_7"/>
+                  <BroadBand bandName="ALMA_ALMA_6"/>
+                  <BroadBand bandName="GALEX_GALEX_FUV"/>
+                  <BroadBand bandName="GALEX_GALEX_NUV"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_U"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_B"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_V"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_R"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_I"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_J"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_M"/>
+                  <BroadBand bandName="HERSCHEL_PACS_70"/>
+                  <BroadBand bandName="HERSCHEL_PACS_100"/>
+                  <BroadBand bandName="HERSCHEL_PACS_160"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_250"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_350"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_500"/>
+                  <BroadBand bandName="IRAS_IRAS_12"/>
+                  <BroadBand bandName="IRAS_IRAS_25"/>
+                  <BroadBand bandName="IRAS_IRAS_60"/>
+                  <BroadBand bandName="IRAS_IRAS_100"/>
+                  <BroadBand bandName="JCMT_SCUBA2_450"/>
+                  <BroadBand bandName="JCMT_SCUBA2_850"/>
+                  <BroadBand bandName="PLANCK_HFI_857"/>
+                  <BroadBand bandName="PLANCK_HFI_545"/>
+                  <BroadBand bandName="PLANCK_HFI_353"/>
+                  <BroadBand bandName="SLOAN_SDSS_U"/>
+                  <BroadBand bandName="SLOAN_SDSS_G"/>
+                  <BroadBand bandName="SLOAN_SDSS_R"/>
+                  <BroadBand bandName="SLOAN_SDSS_I"/>
+                  <BroadBand bandName="SLOAN_SDSS_Z"/>
+                  <BroadBand bandName="SPITZER_IRAC_I1"/>
+                  <BroadBand bandName="SPITZER_IRAC_I2"/>
+                  <BroadBand bandName="SPITZER_IRAC_I3"/>
+                  <BroadBand bandName="SPITZER_IRAC_I4"/>
+                  <BroadBand bandName="SPITZER_MIPS_24"/>
+                  <BroadBand bandName="SPITZER_MIPS_70"/>
+                  <BroadBand bandName="SPITZER_MIPS_160"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Z"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Y"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_J"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_H"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_K"/>
+                  <BroadBand bandName="WISE_WISE_W1"/>
+                  <BroadBand bandName="WISE_WISE_W2"/>
+                  <BroadBand bandName="WISE_WISE_W3"/>
+                  <BroadBand bandName="WISE_WISE_W4"/>
+                </bands>
+              </ConfigurableBandWavelengthGrid>
+            </wavelengthGrid>
+          </SEDInstrument>
+          <SEDInstrument instrumentName="or_z0_band_30" distance="dist_z0_Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="30000 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat">
+            <wavelengthGrid type="WavelengthGrid">
+              <ConfigurableBandWavelengthGrid>
+                <bands type="Band">
+                  <BroadBand bandName="2MASS_2MASS_J"/>
+                  <BroadBand bandName="2MASS_2MASS_H"/>
+                  <BroadBand bandName="2MASS_2MASS_Ks"/>
+                  <BroadBand bandName="ALMA_ALMA_10"/>
+                  <BroadBand bandName="ALMA_ALMA_9"/>
+                  <BroadBand bandName="ALMA_ALMA_8"/>
+                  <BroadBand bandName="ALMA_ALMA_7"/>
+                  <BroadBand bandName="ALMA_ALMA_6"/>
+                  <BroadBand bandName="GALEX_GALEX_FUV"/>
+                  <BroadBand bandName="GALEX_GALEX_NUV"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_U"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_B"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_V"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_R"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_I"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_J"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_M"/>
+                  <BroadBand bandName="HERSCHEL_PACS_70"/>
+                  <BroadBand bandName="HERSCHEL_PACS_100"/>
+                  <BroadBand bandName="HERSCHEL_PACS_160"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_250"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_350"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_500"/>
+                  <BroadBand bandName="IRAS_IRAS_12"/>
+                  <BroadBand bandName="IRAS_IRAS_25"/>
+                  <BroadBand bandName="IRAS_IRAS_60"/>
+                  <BroadBand bandName="IRAS_IRAS_100"/>
+                  <BroadBand bandName="JCMT_SCUBA2_450"/>
+                  <BroadBand bandName="JCMT_SCUBA2_850"/>
+                  <BroadBand bandName="PLANCK_HFI_857"/>
+                  <BroadBand bandName="PLANCK_HFI_545"/>
+                  <BroadBand bandName="PLANCK_HFI_353"/>
+                  <BroadBand bandName="SLOAN_SDSS_U"/>
+                  <BroadBand bandName="SLOAN_SDSS_G"/>
+                  <BroadBand bandName="SLOAN_SDSS_R"/>
+                  <BroadBand bandName="SLOAN_SDSS_I"/>
+                  <BroadBand bandName="SLOAN_SDSS_Z"/>
+                  <BroadBand bandName="SPITZER_IRAC_I1"/>
+                  <BroadBand bandName="SPITZER_IRAC_I2"/>
+                  <BroadBand bandName="SPITZER_IRAC_I3"/>
+                  <BroadBand bandName="SPITZER_IRAC_I4"/>
+                  <BroadBand bandName="SPITZER_MIPS_24"/>
+                  <BroadBand bandName="SPITZER_MIPS_70"/>
+                  <BroadBand bandName="SPITZER_MIPS_160"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Z"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Y"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_J"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_H"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_K"/>
+                  <BroadBand bandName="WISE_WISE_W1"/>
+                  <BroadBand bandName="WISE_WISE_W2"/>
+                  <BroadBand bandName="WISE_WISE_W3"/>
+                  <BroadBand bandName="WISE_WISE_W4"/>
+                </bands>
+              </ConfigurableBandWavelengthGrid>
+            </wavelengthGrid>
+          </SEDInstrument>
+          <SEDInstrument instrumentName="or_z0_SED" distance="dist_z0_Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="0 pc" recordComponents="true" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat"/>
+          <SEDInstrument instrumentName="or_z0_SED_10" distance="dist_z0_Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="10000 pc" recordComponents="true" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat"/>
+          <SEDInstrument instrumentName="or_z0_SED_2R" distance="dist_z0_Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="2R12 pc" recordComponents="true" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat"/>
+          <SEDInstrument instrumentName="or_z0_SED_30" distance="dist_z0_Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="30000 pc" recordComponents="true" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat"/>
+          <SEDInstrument instrumentName="or_obs_band" distance="0 Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="0 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat">
+            <wavelengthGrid type="WavelengthGrid">
+              <ConfigurableBandWavelengthGrid>
+                <bands type="Band">
+                  <BroadBand bandName="2MASS_2MASS_J"/>
+                  <BroadBand bandName="2MASS_2MASS_H"/>
+                  <BroadBand bandName="2MASS_2MASS_Ks"/>
+                  <BroadBand bandName="ALMA_ALMA_10"/>
+                  <BroadBand bandName="ALMA_ALMA_9"/>
+                  <BroadBand bandName="ALMA_ALMA_8"/>
+                  <BroadBand bandName="ALMA_ALMA_7"/>
+                  <BroadBand bandName="ALMA_ALMA_6"/>
+                  <BroadBand bandName="GALEX_GALEX_FUV"/>
+                  <BroadBand bandName="GALEX_GALEX_NUV"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_U"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_B"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_V"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_R"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_I"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_J"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_M"/>
+                  <BroadBand bandName="HERSCHEL_PACS_70"/>
+                  <BroadBand bandName="HERSCHEL_PACS_100"/>
+                  <BroadBand bandName="HERSCHEL_PACS_160"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_250"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_350"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_500"/>
+                  <BroadBand bandName="IRAS_IRAS_12"/>
+                  <BroadBand bandName="IRAS_IRAS_25"/>
+                  <BroadBand bandName="IRAS_IRAS_60"/>
+                  <BroadBand bandName="IRAS_IRAS_100"/>
+                  <BroadBand bandName="JCMT_SCUBA2_450"/>
+                  <BroadBand bandName="JCMT_SCUBA2_850"/>
+                  <BroadBand bandName="PLANCK_HFI_857"/>
+                  <BroadBand bandName="PLANCK_HFI_545"/>
+                  <BroadBand bandName="PLANCK_HFI_353"/>
+                  <BroadBand bandName="SLOAN_SDSS_U"/>
+                  <BroadBand bandName="SLOAN_SDSS_G"/>
+                  <BroadBand bandName="SLOAN_SDSS_R"/>
+                  <BroadBand bandName="SLOAN_SDSS_I"/>
+                  <BroadBand bandName="SLOAN_SDSS_Z"/>
+                  <BroadBand bandName="SPITZER_IRAC_I1"/>
+                  <BroadBand bandName="SPITZER_IRAC_I2"/>
+                  <BroadBand bandName="SPITZER_IRAC_I3"/>
+                  <BroadBand bandName="SPITZER_IRAC_I4"/>
+                  <BroadBand bandName="SPITZER_MIPS_24"/>
+                  <BroadBand bandName="SPITZER_MIPS_70"/>
+                  <BroadBand bandName="SPITZER_MIPS_160"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Z"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Y"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_J"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_H"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_K"/>
+                  <BroadBand bandName="WISE_WISE_W1"/>
+                  <BroadBand bandName="WISE_WISE_W2"/>
+                  <BroadBand bandName="WISE_WISE_W3"/>
+                  <BroadBand bandName="WISE_WISE_W4"/>
+                </bands>
+              </ConfigurableBandWavelengthGrid>
+            </wavelengthGrid>
+          </SEDInstrument>
+          <SEDInstrument instrumentName="or_obs_band_10" distance="0 Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="10000 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat">
+            <wavelengthGrid type="WavelengthGrid">
+              <ConfigurableBandWavelengthGrid>
+                <bands type="Band">
+                  <BroadBand bandName="2MASS_2MASS_J"/>
+                  <BroadBand bandName="2MASS_2MASS_H"/>
+                  <BroadBand bandName="2MASS_2MASS_Ks"/>
+                  <BroadBand bandName="ALMA_ALMA_10"/>
+                  <BroadBand bandName="ALMA_ALMA_9"/>
+                  <BroadBand bandName="ALMA_ALMA_8"/>
+                  <BroadBand bandName="ALMA_ALMA_7"/>
+                  <BroadBand bandName="ALMA_ALMA_6"/>
+                  <BroadBand bandName="GALEX_GALEX_FUV"/>
+                  <BroadBand bandName="GALEX_GALEX_NUV"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_U"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_B"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_V"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_R"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_I"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_J"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_M"/>
+                  <BroadBand bandName="HERSCHEL_PACS_70"/>
+                  <BroadBand bandName="HERSCHEL_PACS_100"/>
+                  <BroadBand bandName="HERSCHEL_PACS_160"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_250"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_350"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_500"/>
+                  <BroadBand bandName="IRAS_IRAS_12"/>
+                  <BroadBand bandName="IRAS_IRAS_25"/>
+                  <BroadBand bandName="IRAS_IRAS_60"/>
+                  <BroadBand bandName="IRAS_IRAS_100"/>
+                  <BroadBand bandName="JCMT_SCUBA2_450"/>
+                  <BroadBand bandName="JCMT_SCUBA2_850"/>
+                  <BroadBand bandName="PLANCK_HFI_857"/>
+                  <BroadBand bandName="PLANCK_HFI_545"/>
+                  <BroadBand bandName="PLANCK_HFI_353"/>
+                  <BroadBand bandName="SLOAN_SDSS_U"/>
+                  <BroadBand bandName="SLOAN_SDSS_G"/>
+                  <BroadBand bandName="SLOAN_SDSS_R"/>
+                  <BroadBand bandName="SLOAN_SDSS_I"/>
+                  <BroadBand bandName="SLOAN_SDSS_Z"/>
+                  <BroadBand bandName="SPITZER_IRAC_I1"/>
+                  <BroadBand bandName="SPITZER_IRAC_I2"/>
+                  <BroadBand bandName="SPITZER_IRAC_I3"/>
+                  <BroadBand bandName="SPITZER_IRAC_I4"/>
+                  <BroadBand bandName="SPITZER_MIPS_24"/>
+                  <BroadBand bandName="SPITZER_MIPS_70"/>
+                  <BroadBand bandName="SPITZER_MIPS_160"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Z"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Y"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_J"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_H"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_K"/>
+                  <BroadBand bandName="WISE_WISE_W1"/>
+                  <BroadBand bandName="WISE_WISE_W2"/>
+                  <BroadBand bandName="WISE_WISE_W3"/>
+                  <BroadBand bandName="WISE_WISE_W4"/>
+                </bands>
+              </ConfigurableBandWavelengthGrid>
+            </wavelengthGrid>
+          </SEDInstrument>
+          <SEDInstrument instrumentName="or_obs_band_2R" distance="0 Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="2R12 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat">
+            <wavelengthGrid type="WavelengthGrid">
+              <ConfigurableBandWavelengthGrid>
+                <bands type="Band">
+                  <BroadBand bandName="2MASS_2MASS_J"/>
+                  <BroadBand bandName="2MASS_2MASS_H"/>
+                  <BroadBand bandName="2MASS_2MASS_Ks"/>
+                  <BroadBand bandName="ALMA_ALMA_10"/>
+                  <BroadBand bandName="ALMA_ALMA_9"/>
+                  <BroadBand bandName="ALMA_ALMA_8"/>
+                  <BroadBand bandName="ALMA_ALMA_7"/>
+                  <BroadBand bandName="ALMA_ALMA_6"/>
+                  <BroadBand bandName="GALEX_GALEX_FUV"/>
+                  <BroadBand bandName="GALEX_GALEX_NUV"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_U"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_B"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_V"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_R"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_I"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_J"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_M"/>
+                  <BroadBand bandName="HERSCHEL_PACS_70"/>
+                  <BroadBand bandName="HERSCHEL_PACS_100"/>
+                  <BroadBand bandName="HERSCHEL_PACS_160"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_250"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_350"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_500"/>
+                  <BroadBand bandName="IRAS_IRAS_12"/>
+                  <BroadBand bandName="IRAS_IRAS_25"/>
+                  <BroadBand bandName="IRAS_IRAS_60"/>
+                  <BroadBand bandName="IRAS_IRAS_100"/>
+                  <BroadBand bandName="JCMT_SCUBA2_450"/>
+                  <BroadBand bandName="JCMT_SCUBA2_850"/>
+                  <BroadBand bandName="PLANCK_HFI_857"/>
+                  <BroadBand bandName="PLANCK_HFI_545"/>
+                  <BroadBand bandName="PLANCK_HFI_353"/>
+                  <BroadBand bandName="SLOAN_SDSS_U"/>
+                  <BroadBand bandName="SLOAN_SDSS_G"/>
+                  <BroadBand bandName="SLOAN_SDSS_R"/>
+                  <BroadBand bandName="SLOAN_SDSS_I"/>
+                  <BroadBand bandName="SLOAN_SDSS_Z"/>
+                  <BroadBand bandName="SPITZER_IRAC_I1"/>
+                  <BroadBand bandName="SPITZER_IRAC_I2"/>
+                  <BroadBand bandName="SPITZER_IRAC_I3"/>
+                  <BroadBand bandName="SPITZER_IRAC_I4"/>
+                  <BroadBand bandName="SPITZER_MIPS_24"/>
+                  <BroadBand bandName="SPITZER_MIPS_70"/>
+                  <BroadBand bandName="SPITZER_MIPS_160"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Z"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Y"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_J"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_H"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_K"/>
+                  <BroadBand bandName="WISE_WISE_W1"/>
+                  <BroadBand bandName="WISE_WISE_W2"/>
+                  <BroadBand bandName="WISE_WISE_W3"/>
+                  <BroadBand bandName="WISE_WISE_W4"/>
+                </bands>
+              </ConfigurableBandWavelengthGrid>
+            </wavelengthGrid>
+          </SEDInstrument>
+          <SEDInstrument instrumentName="or_obs_band_30" distance="0 Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="30000 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat">
+            <wavelengthGrid type="WavelengthGrid">
+              <ConfigurableBandWavelengthGrid>
+                <bands type="Band">
+                  <BroadBand bandName="2MASS_2MASS_J"/>
+                  <BroadBand bandName="2MASS_2MASS_H"/>
+                  <BroadBand bandName="2MASS_2MASS_Ks"/>
+                  <BroadBand bandName="ALMA_ALMA_10"/>
+                  <BroadBand bandName="ALMA_ALMA_9"/>
+                  <BroadBand bandName="ALMA_ALMA_8"/>
+                  <BroadBand bandName="ALMA_ALMA_7"/>
+                  <BroadBand bandName="ALMA_ALMA_6"/>
+                  <BroadBand bandName="GALEX_GALEX_FUV"/>
+                  <BroadBand bandName="GALEX_GALEX_NUV"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_U"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_B"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_V"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_R"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_I"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_J"/>
+                  <BroadBand bandName="GENERIC_JOHNSON_M"/>
+                  <BroadBand bandName="HERSCHEL_PACS_70"/>
+                  <BroadBand bandName="HERSCHEL_PACS_100"/>
+                  <BroadBand bandName="HERSCHEL_PACS_160"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_250"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_350"/>
+                  <BroadBand bandName="HERSCHEL_SPIRE_500"/>
+                  <BroadBand bandName="IRAS_IRAS_12"/>
+                  <BroadBand bandName="IRAS_IRAS_25"/>
+                  <BroadBand bandName="IRAS_IRAS_60"/>
+                  <BroadBand bandName="IRAS_IRAS_100"/>
+                  <BroadBand bandName="JCMT_SCUBA2_450"/>
+                  <BroadBand bandName="JCMT_SCUBA2_850"/>
+                  <BroadBand bandName="PLANCK_HFI_857"/>
+                  <BroadBand bandName="PLANCK_HFI_545"/>
+                  <BroadBand bandName="PLANCK_HFI_353"/>
+                  <BroadBand bandName="SLOAN_SDSS_U"/>
+                  <BroadBand bandName="SLOAN_SDSS_G"/>
+                  <BroadBand bandName="SLOAN_SDSS_R"/>
+                  <BroadBand bandName="SLOAN_SDSS_I"/>
+                  <BroadBand bandName="SLOAN_SDSS_Z"/>
+                  <BroadBand bandName="SPITZER_IRAC_I1"/>
+                  <BroadBand bandName="SPITZER_IRAC_I2"/>
+                  <BroadBand bandName="SPITZER_IRAC_I3"/>
+                  <BroadBand bandName="SPITZER_IRAC_I4"/>
+                  <BroadBand bandName="SPITZER_MIPS_24"/>
+                  <BroadBand bandName="SPITZER_MIPS_70"/>
+                  <BroadBand bandName="SPITZER_MIPS_160"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Z"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_Y"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_J"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_H"/>
+                  <BroadBand bandName="UKIRT_UKIDSS_K"/>
+                  <BroadBand bandName="WISE_WISE_W1"/>
+                  <BroadBand bandName="WISE_WISE_W2"/>
+                  <BroadBand bandName="WISE_WISE_W3"/>
+                  <BroadBand bandName="WISE_WISE_W4"/>
+                </bands>
+              </ConfigurableBandWavelengthGrid>
+            </wavelengthGrid>
+          </SEDInstrument>
+          <SEDInstrument instrumentName="or_obs_SED" distance="0 Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="0 pc" recordComponents="true" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat"/>
+          <SEDInstrument instrumentName="or_obs_SED_10" distance="0 Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="10000 pc" recordComponents="true" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat"/>
+          <SEDInstrument instrumentName="or_obs_SED_2R" distance="0 Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="2R12 pc" recordComponents="true" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat"/>
+          <SEDInstrument instrumentName="or_obs_SED_30" distance="0 Mpc" inclination="OrI deg" azimuth="OrA deg" roll="OrR deg" radius="30000 pc" recordComponents="true" numScatteringLevels="0" recordPolarization="false" recordStatistics="recStat"/>
+        </instruments>
+      </InstrumentSystem>
+    </instrumentSystem>
+  </MonteCarloSimulation>
+</skirt-simulation-hierarchy>
