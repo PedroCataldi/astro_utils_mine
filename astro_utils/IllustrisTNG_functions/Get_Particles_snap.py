@@ -269,30 +269,38 @@ def plot_merged_particles(fits_file, idsub, i, s=1e-3, subsample=None, figsize=(
 
 
 def snap_phy_subhalo(base, snap, subhalo_id, ptype, aexp, adot, hh, extra_fields=None):
-    """Loads a particle type from TNG and converts to physical units."""
+    """Loads a particle type from TNG and converts selected fields to physical units."""
+    
     fields = ['Velocities', 'Coordinates']
     if extra_fields:
         fields += extra_fields
+
     part = il.snapshot.loadSubhalo(base, snap, subhalo_id, ptype, fields=fields)
 
-    # Convert positions and velocities to physical units
+    # Convert positions and velocities
     pos = part['Coordinates'] / hh * aexp
     vel = part['Velocities'] * aexp**0.5 + pos * adot / hh
 
     data = {'pos': pos, 'vel': vel}
-    if 'Masses' in part:
-        data['mass'] = part['Masses'] * 1e10 / hh
-    if 'Potential' in part:
-        data['pot'] = part['Potential'] / aexp
-    if 'GFM_Metallicity' in part:
-        data['GFM_Metallicity'] = part['GFM_Metallicity']
-    if 'InternalEnergy' in part:
-        data['InternalEnergy'] = part['InternalEnergy']
-    if 'ElectronAbundance' in part:
-        data['ElectronAbundance'] = part['ElectronAbundance']
-    if 'Density' in part:
-        data['Density'] = part['Density'] * ((hh**2) *1e10) / (aexp**3.0)
-    if 'StarFormationRate' in part:
-        data['StarFormationRate'] = part['StarFormationRate']
-    return data
+
+    # Loop through loaded fields
+    for key in part.keys():
+
+        if key in ['Coordinates', 'Velocities']:
+            continue
+
+        elif key == 'Masses':
+            data['mass'] = part['Masses'] * 1e10 / hh
+
+        elif key == 'Potential':
+            data['pot'] = part['Potential'] / aexp
+
+        elif key == 'Density':
+            data['Density'] = part['Density'] * ((hh**2) * 1e10) / (aexp**3.0)
+
+        else:
+            # return any other field unchanged
+            data[key] = part[key]
+
+    return data data
     
